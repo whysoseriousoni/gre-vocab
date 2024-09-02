@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Word Vocabulary</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+            .red {
+                background-color: red;
+                color: white;
+            }
+            .green {
+                background-color: green;
+                color: white;
+            }
+        </style>
+        <script src="script.js"></script>
+
+    </head>
+    <body>
+        <h1>Select Word Set</h1>
+        <select id="wordSetSelector">
+            <!-- Options will be dynamically generated -->
+        </select>
+
+        <table id="wordTable">
+            <!-- Word table will be dynamically generated -->
+        </table>
+
+        <!-- Popup modal -->
+        <div
+            id="wordPopup"
+            style="
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: white;
+                padding: 20px;
+                border: 2px solid black;
+            "
+        >
+            <h2 id="popupWord"></h2>
+            <p>
+                <strong>Part of Speech:</strong>
+                <span id="popupPartOfSpeech"></span>
+            </p>
+            <p><strong>Definitions:</strong></p>
+            <ul id="popupDefinitions"></ul>
+            <p><strong>Examples:</strong></p>
+            <ul id="popupExamples"></ul>
+            <img id="popupImage" src="" alt="" style="max-width: 100%" />
+            <button onclick="closePopup()">Close</button>
+        </div>
+
+    </body>
+</html>
