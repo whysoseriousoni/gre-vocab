@@ -4,11 +4,19 @@ let currentSelectedCell = null;
 
 $(document).ready(function () {
     // List of JSON files to load
-    const jsonFiles = ["data/group_compact_1_8.json", "data/group_compact_9_12.json", "data/group_compact_13_20.json", "data/group_compact_21_28.json", "data/group_compact_29_36.json", "data/group_compact_37_46.json", "data/group_compact_47_52.json"];
-    
+    const jsonFiles = [
+        "data/group_compact_1_8.json",
+        "data/group_compact_9_12.json",
+        "data/group_compact_13_20.json",
+        "data/group_compact_21_28.json",
+        "data/group_compact_29_36.json",
+        "data/group_compact_37_46.json",
+        "data/group_compact_47_52.json",
+    ];
+
     // Function to load each JSON file and append the data
     function loadJsonFiles(files) {
-        let fileLoadPromises = files.map(file => {
+        let fileLoadPromises = files.map((file) => {
             return $.getJSON(file, function (json) {
                 wordData = wordData.concat(json);
             });
@@ -24,7 +32,6 @@ $(document).ready(function () {
     // Load all JSON files
     loadJsonFiles(jsonFiles);
 });
-
 
 // Generate word table with multiple columns for each set
 function generateWordTable() {
@@ -156,6 +163,8 @@ function openPopup(wordId) {
     document.getElementById("popupPartOfSpeech").textContent = word.definitions
         .map((def) => def.partOfSpeech)
         .join(", ");
+        
+    document.getElementById("popupSynonyms").textContent = word.synonyms.join(", ");
 
     const definitionsList = document.getElementById("popupDefinitions");
     definitionsList.innerHTML = "";
