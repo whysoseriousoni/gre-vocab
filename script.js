@@ -5,12 +5,12 @@ let currentSelectedCell = null;
 $(document).ready(function () {
     // List of JSON files to load
     const jsonFiles = [
-        "data/group_compact_1_8.json",
-        "data/group_compact_9_12.json",
-        "data/group_compact_13_20.json",
-        "data/group_compact_21_28.json",
-        "data/group_compact_29_36.json",
-        "data/group_compact_37_46.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_1_8.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_9_12.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_13_20.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_21_28.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_29_36.json",
+        "https://raw.githubusercontent.com/whysoseriousoni/gre-vocab/main/data/group_compact_37_46.json",
         "data/group_compact_47_52.json",
     ];
 
@@ -24,6 +24,8 @@ $(document).ready(function () {
 
         // When all files are loaded, initialize the application
         $.when(...fileLoadPromises).done(function () {
+            wordData = wordData.sort(function(a, b){return a.id>b.id})
+            console.log(wordData);
             generateWordTable();
             document.addEventListener("keydown", handleKeyPress);
         });
