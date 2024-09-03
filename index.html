@@ -6,6 +6,63 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Word Vocabulary</title>
         <style>
+            /* Popup Styles */
+            #wordPopup {
+                display: none;
+                position: fixed;
+                top: 5%;
+                left: 5%;
+                width: 90%;
+                height: 90%; /* Adjust height to occupy 90% of the screen */
+                padding: 20px;
+                color: white;
+                background-color: rgb(37, 31, 35);
+                border: 2px solid white;
+                box-sizing: border-box;
+                overflow-y: auto; /* Allow scrolling if content overflows */
+                z-index: 1000; /* Ensure the popup appears above other content */
+            }
+
+            /* Close Button */
+            #closePopup {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                cursor: pointer;
+                color: white;
+                background-color: rgb(243, 46, 79);
+                border: none;
+                padding: 5px 10px;
+                font-size: 16px;
+                z-index: 1001;
+            }
+
+            /* Web Version (Horizontal Scroll) */
+            @media screen and (min-width: 768px) {
+                body {
+                    overflow-x: scroll;
+                    overflow-y: scroll;
+                    white-space: nowrap;
+                }
+            }
+
+            /* Mobile Version (Vertical Scroll) */
+            @media screen and (max-width: 767px) {
+                body {
+                    overflow-x: scroll;
+                    overflow-y: scroll;
+                }
+
+                table {
+                    white-space: normal;
+                }
+
+                td,
+                th {
+                    word-wrap: break-word;
+                }
+            }
+
             /* Add your styles here */
             table {
                 width: 100%;
@@ -35,24 +92,14 @@
             .green {
                 background-color: green;
             }
-
-            #wordPopup {
-                display: none;
-                position: fixed;
-                top: 20%;
-                left: 20%;
-                width: 60%;
-                padding: 20px;
-                color: white;
-                background-color: rgb(37, 31, 35);
-                border: 2px solid white;
-            }
         </style>
     </head>
     <body>
         <table id="wordTable"></table>
 
         <div id="wordPopup">
+            <button id="closePopup">Close</button>
+            <!-- Close button -->
             <h2 id="popupWord"></h2>
             <p>
                 <strong>Part of Speech:</strong>
@@ -96,9 +143,18 @@
                         wordData = wordData.sort(function (a, b) {
                             return a.id > b.id;
                         });
-                        console.log(wordData);
                         generateWordTable();
                         document.addEventListener("keydown", handleKeyPress);
+                        // Event listener for double-tap/click on mobile or click on desktop
+                        $("#wordTable").on(
+                            "dblclick touchend",
+                            "td",
+                            function () {
+                                openPopup($(this).data("wordId"));
+                            }
+                        );
+                        // Event listener for close button
+                        $("#closePopup").on("click", closePopup);
                     });
                 }
 
@@ -157,6 +213,7 @@
             }
 
             // Handle keyboard key press events
+
             function handleKeyPress(event) {
                 if (!currentSelectedCell) return;
 
@@ -184,10 +241,12 @@
                     case "d":
                         togglePopup(currentSelectedCell.dataset.wordId);
                         break;
+                    case "Escape":
+                        closePopup();
+                        break;
                 }
             }
 
-            // Navigate the selection
             function navigate(rowOffset, colOffset) {
                 const rows = Array.from(
                     document.querySelectorAll("#wordTable tr")
@@ -211,7 +270,6 @@
                 }
             }
 
-            // Select a cell and highlight it
             function selectCell(cell) {
                 if (currentSelectedCell) {
                     currentSelectedCell.classList.remove("highlight");
@@ -221,7 +279,6 @@
                 currentSelectedCell.focus();
             }
 
-            // Toggle the popup visibility
             function togglePopup(wordId) {
                 const popup = document.getElementById("wordPopup");
                 if (popup.style.display === "block") {
@@ -231,7 +288,6 @@
                 }
             }
 
-            // Open the popup with word details
             function openPopup(wordId) {
                 const popup = document.getElementById("wordPopup");
                 const word = wordData.find((w) => w.id == wordId);
@@ -240,9 +296,23 @@
                 document.getElementById("popupWord").textContent = word.word;
                 document.getElementById("popupPartOfSpeech").textContent =
                     word.definitions.map((def) => def.partOfSpeech).join(", ");
+                const synonymsList = document.getElementById("popupSynonyms");
+                synonymsList.innerHTML = ""; // Clear existing content
 
-                document.getElementById("popupSynonyms").textContent =
-                    word.synonyms.join(", ");
+                if (word.synonyms.length > 0) {
+                    let formattedSynonyms = "";
+                    word.synonyms.forEach((synonym, index) => {
+                        formattedSynonyms += synonym;
+                        if ((index + 1) % 5 === 0) {
+                            formattedSynonyms += "<br>"; // Break line after every 5 words
+                        } else if (index !== word.synonyms.length - 1) {
+                            formattedSynonyms += ", "; // Add comma between synonyms
+                        }
+                    });
+                    synonymsList.innerHTML = formattedSynonyms;
+                } else {
+                    synonymsList.innerHTML = "No synonyms available.";
+                }
 
                 const definitionsList =
                     document.getElementById("popupDefinitions");
@@ -276,7 +346,6 @@
                 popup.style.display = "block";
             }
 
-            // Close the popup
             function closePopup() {
                 const popup = document.getElementById("wordPopup");
                 popup.style.display = "none";
